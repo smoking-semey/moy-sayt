@@ -178,15 +178,31 @@
       .wrap { width: calc(100% - 32px); }
       .section { padding: 52px 0; }
       .hero {
-        min-height: min(720px, 100svh);
-        display: flex;
-        align-items: flex-end;
-        padding: 72px 0 48px;
-        background-position: center, center top;
+        position: relative;
+        min-height: 0;
+        display: block;
+        padding: 250px 0 28px;
+        background-color: var(--bg);
+        background-size: 100% 100%, auto 245px;
+        background-position: center, right top;
+        background-repeat: no-repeat;
       }
-      .hero .wrap { margin-inline: auto; }
+      .hero::before {
+        content: "";
+        position: absolute;
+        top: 175px;
+        left: 0;
+        right: 0;
+        height: 75px;
+        background: linear-gradient(to bottom, transparent, var(--bg));
+        pointer-events: none;
+      }
+      .hero .wrap { position: relative; margin-inline: auto; }
+      .hero .eyebrow { margin-bottom: 8px; }
+      .hero h1 { margin-bottom: 14px; }
+      .hero .lead { margin-bottom: 20px; }
       .eyebrow { font-size: .72rem; letter-spacing: .09em; }
-      h1 { font-size: clamp(2.25rem, 10vw, 3.5rem); }
+      h1 { font-size: clamp(2rem, 8.6vw, 2.7rem); }
       h2 { font-size: clamp(2rem, 8vw, 2.9rem); }
       h3 { font-size: 1.3rem; }
       .lead, .intro { font-size: 1.05rem; }
@@ -203,13 +219,12 @@
     @media (max-width: 360px) {
       .wrap { width: calc(100% - 28px); }
       .card, .placeholder, .contact-box { padding: 20px; }
-      h1 { font-size: 2.15rem; }
+      h1 { font-size: 1.95rem; }
       h2 { font-size: 1.9rem; }
-      .hero { min-height: 620px; }
     }
     @supports (padding: max(0px)) {
       @media (max-width: 600px) {
-        .hero { padding-bottom: max(48px, env(safe-area-inset-bottom)); }
+        .hero { padding-bottom: max(28px, env(safe-area-inset-bottom)); }
       }
     }
     @media (prefers-reduced-motion: reduce) {
