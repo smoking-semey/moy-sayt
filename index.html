@@ -93,6 +93,16 @@
     .placeholder h2 { max-width: 720px; }
     .placeholder p { max-width: 650px; }
     .placeholder p:last-of-type { margin-bottom: 27px; }
+    .quiz-card { max-width: 760px; padding: clamp(24px, 5vw, 48px); border: 1px solid var(--line); border-radius: 14px; background: var(--surface); }
+    .quiz-progress { margin-bottom: 12px; color: var(--accent); font-weight: 750; }
+    .quiz-question { margin-bottom: 26px; font-size: clamp(1.45rem, 3vw, 2rem); }
+    .quiz-answers { display: grid; gap: 12px; }
+    .quiz-card [hidden] { display: none !important; }
+    .quiz-answer { width: 100%; min-height: 60px; padding: 16px 20px; border: 1px solid #58728d; border-radius: 8px; background: var(--surface-2); color: var(--text); font: inherit; font-weight: 650; text-align: left; cursor: pointer; }
+    .quiz-answer:hover, .quiz-answer:focus-visible { border-color: var(--accent); background: #193957; }
+    .quiz-answer:focus-visible, .quiz-restart:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+    .quiz-result-price { margin-bottom: 14px; color: var(--text); font-size: 1.55rem; font-weight: 750; }
+    .quiz-restart { margin-top: 14px; cursor: pointer; }
     .reasons { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin: 34px 0; }
     .reason { padding: 26px; border-top: 2px solid var(--accent); background: var(--surface); }
     .reason h3 { font-size: 1.14rem; }
@@ -242,6 +252,7 @@
       </button>
       <nav class="site-nav" id="site-nav" aria-label="Основное меню">
         <a href="#services">Услуги</a>
+        <a href="#quiz">Подпор</a>
         <a href="#about">О нас</a>
         <a href="#contacts">Контакты</a>
       </nav>
@@ -253,7 +264,7 @@
         <p class="eyebrow">Смокинг Семей · магазин смокингов в Семее</p>
         <h1 id="hero-title">Смокинги в Семее: подберём под вашу фигуру</h1>
         <p class="lead">Здесь можно найти смокинг, который сядет по фигуре, а не просто купить готовый.</p>
-        <a class="button hero-button" href="#services">Смотреть услуги</a>
+        <a class="button hero-button" href="#quiz">Подобрать услугу</a>
       </div>
     </section>
 
@@ -297,14 +308,21 @@
       </div>
     </section>
 
-    <section class="section" aria-labelledby="quiz-title">
+    <section class="section" id="quiz" aria-labelledby="quiz-title">
       <div class="wrap">
-        <p class="eyebrow">03 / Место под калькулятор или квиз</p>
-        <div class="placeholder">
-          <h2 id="quiz-title">Не знаете, какой смокинг выбрать?</h2>
-          <p>Скоро здесь появится подбор: ответите на несколько вопросов и увидите подходящий вариант.</p>
-          <p>А пока напишите нам, подскажем лично.</p>
-          <a class="button" href="https://wa.me/77479816521?text=Здравствуйте%21%20Помогите%20выбрать%20смокинг" target="_blank" rel="noopener noreferrer">Спросить в WhatsApp</a>
+        <p class="eyebrow">03 / Подбор смокинга</p>
+        <h2 id="quiz-title">Подобрать</h2>
+        <p class="intro">Ответьте на 6 вопросов, нажимая на подходящий ответ. После шестого вопроса появится результат.</p>
+        <div class="quiz-card" aria-live="polite">
+          <p class="quiz-progress" id="quiz-progress">Вопрос 1 из 6</p>
+          <h3 class="quiz-question" id="quiz-question">Для какого события нужен смокинг?</h3>
+          <div class="quiz-answers" id="quiz-answers"></div>
+          <div id="quiz-result" hidden>
+            <h3 id="quiz-result-title"></h3>
+            <div class="quiz-result-price" id="quiz-result-price"></div>
+            <p id="quiz-result-reason"></p>
+            <button class="button quiz-restart" id="quiz-restart" type="button">Пройти заново</button>
+          </div>
         </div>
       </div>
     </section>
@@ -361,6 +379,98 @@
     window.addEventListener('resize', () => {
       if (window.innerWidth > 760) closeMenu();
     });
+
+    const quizServices = {
+      classic: { name: 'Классический чёрный смокинг', price: '85 000 ₸', why: 'Универсальный вариант для свадьбы, вечера и торжества.' },
+      satin: { name: 'Смокинг с атласным воротником', price: '120 000 ₸', why: 'Нарядный вариант для выпускного и банкета.' },
+      three: { name: 'Смокинг-тройка (с жилетом)', price: '150 000 ₸', why: 'Полный комплект для главного события.' },
+      blue: { name: 'Смокинг тёмно-синий (миднайт)', price: '110 000 ₸', why: 'Выглядит благороднее чёрного при вечернем свете.' }
+    };
+    const quizQuestions = [
+      { question: 'Для какого события нужен смокинг?', answers: [
+        { label: 'Для официального вечера', service: 'classic' },
+        { label: 'Для выпускного или банкета', service: 'satin' },
+        { label: 'Для свадьбы', service: 'three' }
+      ] },
+      { question: 'Какой образ вам ближе?', answers: [
+        { label: 'Необычный тёмно-синий цвет', service: 'blue' },
+        { label: 'Универсальная классика', service: 'classic' },
+        { label: 'Нарядный атласный воротник', service: 'satin' }
+      ] },
+      { question: 'Что для вас важнее при выборе?', answers: [
+        { label: 'Полный комплект с жилетом', service: 'three' },
+        { label: 'Цвет, который эффектно смотрится вечером', service: 'blue' },
+        { label: 'Смокинг для разных событий', service: 'classic' }
+      ] },
+      { question: 'Какой акцент вам нравится больше?', answers: [
+        { label: 'Атласная отделка воротника', service: 'satin' },
+        { label: 'Глубокий тёмно-синий оттенок', service: 'blue' },
+        { label: 'Жилет в комплекте', service: 'three' }
+      ] },
+      { question: 'Как вы хотите выглядеть на фотографиях?', answers: [
+        { label: 'Строго и сдержанно', service: 'classic' },
+        { label: 'С необычным цветовым акцентом', service: 'blue' },
+        { label: 'Особенно торжественно, в полном комплекте', service: 'three' }
+      ] },
+      { question: 'Когда планируете надевать смокинг?', answers: [
+        { label: 'На разные торжественные события', service: 'classic' },
+        { label: 'На выпускной или банкет', service: 'satin' },
+        { label: 'На вечерние мероприятия', service: 'blue' }
+      ] }
+    ];
+    const quizProgress = document.querySelector('#quiz-progress');
+    const quizQuestion = document.querySelector('#quiz-question');
+    const quizAnswers = document.querySelector('#quiz-answers');
+    const quizResult = document.querySelector('#quiz-result');
+    let quizStep = 0;
+    let quizVotes = [];
+
+    function renderQuizQuestion() {
+      const current = quizQuestions[quizStep];
+      quizProgress.textContent = `Вопрос ${quizStep + 1} из ${quizQuestions.length}`;
+      quizQuestion.textContent = current.question;
+      quizAnswers.replaceChildren();
+      current.answers.forEach(answer => {
+        const button = document.createElement('button');
+        button.className = 'quiz-answer';
+        button.type = 'button';
+        button.textContent = answer.label;
+        button.addEventListener('click', () => {
+          quizVotes.push(answer.service);
+          quizStep++;
+          if (quizStep === quizQuestions.length) showQuizResult();
+          else renderQuizQuestion();
+        });
+        quizAnswers.append(button);
+      });
+    }
+
+    function showQuizResult() {
+      const scores = Object.fromEntries(Object.keys(quizServices).map(key => [key, 0]));
+      quizVotes.forEach(key => { scores[key]++; });
+      // При равенстве выбираем классический чёрный смокинг.
+      const bestScore = Math.max(...Object.values(scores));
+      const leaders = Object.keys(scores).filter(key => scores[key] === bestScore);
+      const winner = leaders.length === 1 ? leaders[0] : 'classic';
+      const service = quizServices[winner];
+      quizProgress.textContent = 'Результат';
+      quizQuestion.hidden = true;
+      quizAnswers.hidden = true;
+      document.querySelector('#quiz-result-title').textContent = 'Вам подходит: ' + service.name;
+      document.querySelector('#quiz-result-price').textContent = 'от ' + service.price;
+      document.querySelector('#quiz-result-reason').textContent = 'Почему подходит: ' + service.why;
+      quizResult.hidden = false;
+    }
+
+    document.querySelector('#quiz-restart').addEventListener('click', () => {
+      quizStep = 0;
+      quizVotes = [];
+      quizResult.hidden = true;
+      quizQuestion.hidden = false;
+      quizAnswers.hidden = false;
+      renderQuizQuestion();
+    });
+    renderQuizQuestion();
   </script>
 </body>
 </html>
